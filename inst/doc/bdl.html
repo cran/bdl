@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Krzysztof Kania" />
+
+<meta name="date" content="2019-09-11" />
+
+<title>Downloading and using data from bdl</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Downloading and using data from bdl</h1>
+<h4 class="author">Krzysztof Kania</h4>
+<h4 class="date">2019-09-11</h4>
+
+
+
+<p>The <code>bdl</code> package is an interface to Local Data Bank(Bank Danych Lokalnych - bdl) <a href="https://bdl.stat.gov.pl/api/v1/home">API</a> with set of useful tools like quick plotting using data from data bank.</p>
+<div id="intro" class="section level2">
+<h2>Intro</h2>
+<p>Working with <code>bdl</code> is based on id codes. Most of data downloading functions requires specifying one or vector of multiple unit or variable ids as a string.</p>
+<p>It is recommended to use private API key which u can get <a href="https://bdl.stat.gov.pl/api/v1/client">here</a>. To apply use: <code>options(bdl.api_private_key =&quot;your_key&quot;)</code></p>
+<p>Also every function returns data by default in Polish. If you would like get data in English just add <code>lang = &quot;en&quot;</code> to any function.</p>
+<p>Any metadata information (unit levels, aggregates, NUTS code explanation etc.) can be found <a href="https://bdl.stat.gov.pl/BDL/metadane">here</a>.</p>
+</div>
+<div id="searching-unit-id" class="section level2">
+<h2>Searching unit id</h2>
+<p>When searching for unit id we can use two methods:</p>
+<ul>
+<li>Direct search <code>search_units()</code></li>
+<li>Tree listing by <code>get_units()</code></li>
+</ul>
+<p>Units consist of 6 levels:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">get_levels</span>()</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="co">#&gt; # A tibble: 8 x 2</span></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="co">#&gt;      id name                </span></a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;               </span></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="co">#&gt; 1     0 Poziom Polski       </span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="co">#&gt; 2     1 Poziom Makroregionów</span></a>
+<a class="sourceLine" id="cb1-7" title="7"><span class="co">#&gt; 3     2 Poziom Województw   </span></a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="co">#&gt; 4     3 Poziom Regionów     </span></a>
+<a class="sourceLine" id="cb1-9" title="9"><span class="co">#&gt; # ... with 4 more rows</span></a></code></pre></div>
+<p>Lowest - seventh level has own separate functions with suffix <code>localities</code>. Warning - localities functions have different set of arguments. Check package or API documentation for more info.</p>
+<div id="direct-search" class="section level3">
+<h3>Direct search</h3>
+<p>Direct searching <code>search_units()</code> takes couple different arguments like:</p>
+<ul>
+<li><code>name</code> - required search phrase (can be empty string)</li>
+<li><code>level</code> - narrows returned units to given level</li>
+</ul>
+<p>and more. To look for more arguments on any given function check package or API documentation.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">search_units</span>(<span class="dt">name =</span> <span class="st">&quot;wro&quot;</span>)</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="co">#&gt; # A tibble: 15 x 6</span></a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="co">#&gt;   id           name                  parentId    level kind  hasDescription</span></a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt;                 &lt;chr&gt;       &lt;int&gt; &lt;chr&gt; &lt;lgl&gt;         </span></a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="co">#&gt; 1 023016124083 Wronki                0230161240~     6 3     FALSE         </span></a>
+<a class="sourceLine" id="cb2-6" title="6"><span class="co">#&gt; 2 023016124084 Wronki - miasto       0230161240~     6 4     FALSE         </span></a>
+<a class="sourceLine" id="cb2-7" title="7"><span class="co">#&gt; 3 023016124085 Wronki - obszar wiej~ 0230161240~     6 5     FALSE         </span></a>
+<a class="sourceLine" id="cb2-8" title="8"><span class="co">#&gt; 4 030210400000 PODREGION WROCŁAWSKI  0302100000~     4 &lt;NA&gt;  FALSE         </span></a>
+<a class="sourceLine" id="cb2-9" title="9"><span class="co">#&gt; # ... with 11 more rows</span></a>
+<a class="sourceLine" id="cb2-10" title="10"><span class="kw">search_units</span>(<span class="dt">name =</span> <span class="st">&quot;&quot;</span>, <span class="dt">level =</span> <span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb2-11" title="11"><span class="co">#&gt; # A tibble: 17 x 5</span></a>
+<a class="sourceLine" id="cb2-12" title="12"><span class="co">#&gt;   id           name                 parentId     level hasDescription</span></a>
+<a class="sourceLine" id="cb2-13" title="13"><span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt;                &lt;chr&gt;        &lt;int&gt; &lt;lgl&gt;         </span></a>
+<a class="sourceLine" id="cb2-14" title="14"><span class="co">#&gt; 1 011210000000 REGION MAŁOPOLSKIE   011200000000     3 FALSE         </span></a>
+<a class="sourceLine" id="cb2-15" title="15"><span class="co">#&gt; 2 012410000000 REGION ŚLĄSKIE       012400000000     3 FALSE         </span></a>
+<a class="sourceLine" id="cb2-16" title="16"><span class="co">#&gt; 3 020810000000 REGION LUBUSKIE      020800000000     3 FALSE         </span></a>
+<a class="sourceLine" id="cb2-17" title="17"><span class="co">#&gt; 4 023010000000 REGION WIELKOPOLSKIE 023000000000     3 FALSE         </span></a>
+<a class="sourceLine" id="cb2-18" title="18"><span class="co">#&gt; # ... with 13 more rows</span></a></code></pre></div>
+</div>
+<div id="tree-listing" class="section level3">
+<h3>Tree listing</h3>
+<p>To get all units available in local data bank run <code>get_units()</code> without any argument(warning - it can eat data limit very fast around 4.5k rows):</p>
+<p>To narrow the list add <code>unitParentId</code>. Function will return all children units for a given parent at all levels. Add <code>level</code> argument to filter units even further.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">get_units</span>(<span class="dt">parentId =</span> <span class="st">&quot;000000000000&quot;</span>, <span class="dt">level =</span> <span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="co">#&gt; # A tibble: 382 x 6</span></a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="co">#&gt;   id           name              parentId     level kind  hasDescription</span></a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;        &lt;int&gt; &lt;chr&gt; &lt;lgl&gt;         </span></a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="co">#&gt; 1 011212001000 Powiat bocheński  011212000000     5 1     FALSE         </span></a>
+<a class="sourceLine" id="cb3-6" title="6"><span class="co">#&gt; 2 011212006000 Powiat krakowski  011212000000     5 1     FALSE         </span></a>
+<a class="sourceLine" id="cb3-7" title="7"><span class="co">#&gt; 3 011212008000 Powiat miechowski 011212000000     5 1     FALSE         </span></a>
+<a class="sourceLine" id="cb3-8" title="8"><span class="co">#&gt; 4 011212009000 Powiat myślenicki 011212000000     5 1     FALSE         </span></a>
+<a class="sourceLine" id="cb3-9" title="9"><span class="co">#&gt; # ... with 378 more rows</span></a></code></pre></div>
+</div>
+</div>
+<div id="searching-subject-and-variable-id" class="section level2">
+<h2>Searching subject and variable id</h2>
+<p>Subjects are themed directories of variables.</p>
+<p>We have two searching methods for both subjects and variables:</p>
+<ul>
+<li>Direct search <code>search_variables()</code> and <code>search_subjects()</code></li>
+<li>Subject tree listing by <code>get_subjects()</code> and <code>get_variables()</code></li>
+</ul>
+<div id="subjects" class="section level3">
+<h3>Subjects</h3>
+<p>To directly search for subject we just provide search phrase:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">search_subjects</span>(<span class="st">&quot;lud&quot;</span>)</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="co">#&gt; # A tibble: 125 x 6</span></a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt;   id    name                  hasVariables children   levels    parentId</span></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;                 &lt;lgl&gt;        &lt;list&gt;     &lt;list&gt;    &lt;chr&gt;   </span></a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt; 1 K3    LUDNOŚĆ               FALSE        &lt;chr [7]&gt;  &lt;int [5]&gt; &lt;NA&gt;    </span></a>
+<a class="sourceLine" id="cb4-6" title="6"><span class="co">#&gt; 2 G7    STAN LUDNOŚCI         FALSE        &lt;chr [18]&gt; &lt;int [4]&gt; K3      </span></a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="co">#&gt; 3 G260  STAN ZDROWIA LUDNOŚCI FALSE        &lt;chr [5]&gt;  &lt;int [1]&gt; K22     </span></a>
+<a class="sourceLine" id="cb4-8" title="8"><span class="co">#&gt; 4 G299  NSP 2002 - LUDNOŚĆ    FALSE        &lt;chr [29]&gt; &lt;int [4]&gt; K31     </span></a>
+<a class="sourceLine" id="cb4-9" title="9"><span class="co">#&gt; # ... with 121 more rows</span></a></code></pre></div>
+<p>Subjects consist of 3 levels (categories, groups, subgroups) - <code>K</code>, <code>G</code> and <code>P</code> respectively. The fourth level of subject (child of subgroup) would be variables.</p>
+<p>To list all top level subjects use <code>get_subjects()</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">get_subjects</span>()</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="co">#&gt; # A tibble: 32 x 5</span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt;   id    name                  hasVariables children  levels   </span></a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;                 &lt;lgl&gt;        &lt;list&gt;    &lt;list&gt;   </span></a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="co">#&gt; 1 K1    PODZIAŁ TERYTORIALNY  FALSE        &lt;chr [2]&gt; &lt;int [3]&gt;</span></a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt; 2 K2    SAMORZĄD TERYTORIALNY FALSE        &lt;chr [9]&gt; &lt;int [3]&gt;</span></a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="co">#&gt; 3 K3    LUDNOŚĆ               FALSE        &lt;chr [7]&gt; &lt;int [5]&gt;</span></a>
+<a class="sourceLine" id="cb5-8" title="8"><span class="co">#&gt; 4 K4    RYNEK PRACY           FALSE        &lt;chr [9]&gt; &lt;int [4]&gt;</span></a>
+<a class="sourceLine" id="cb5-9" title="9"><span class="co">#&gt; # ... with 28 more rows</span></a></code></pre></div>
+<p>To list sub-subjects to given category or group use <code>get_subjects()</code> with <code>parentId</code> argument:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">get_subjects</span>(<span class="dt">parentId =</span> <span class="st">&quot;K3&quot;</span>)</a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="co">#&gt; # A tibble: 7 x 6</span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt;   id    parentId name                       hasVariables children  levels  </span></a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;                      &lt;lgl&gt;        &lt;list&gt;    &lt;list&gt;  </span></a>
+<a class="sourceLine" id="cb6-5" title="5"><span class="co">#&gt; 1 G7    K3       STAN LUDNOŚCI              FALSE        &lt;chr [18~ &lt;int [4~</span></a>
+<a class="sourceLine" id="cb6-6" title="6"><span class="co">#&gt; 2 G8    K3       MIGRACJE WEWNĘTRZNE I ZAG~ FALSE        &lt;chr [14~ &lt;int [3~</span></a>
+<a class="sourceLine" id="cb6-7" title="7"><span class="co">#&gt; 3 G10   K3       GOSPODARSTWA DOMOWE        FALSE        &lt;chr [9]&gt; &lt;int [1~</span></a>
+<a class="sourceLine" id="cb6-8" title="8"><span class="co">#&gt; 4 G534  K3       URODZENIA I ZGONY          FALSE        &lt;chr [13~ &lt;int [4~</span></a>
+<a class="sourceLine" id="cb6-9" title="9"><span class="co">#&gt; # ... with 3 more rows</span></a>
+<a class="sourceLine" id="cb6-10" title="10"><span class="kw">get_subjects</span>(<span class="dt">parentId =</span> <span class="st">&quot;G7&quot;</span>)</a>
+<a class="sourceLine" id="cb6-11" title="11"><span class="co">#&gt; # A tibble: 18 x 6</span></a>
+<a class="sourceLine" id="cb6-12" title="12"><span class="co">#&gt;   id    parentId name                         hasVariables children  levels</span></a>
+<a class="sourceLine" id="cb6-13" title="13"><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;                        &lt;lgl&gt;        &lt;list&gt;    &lt;list&gt;</span></a>
+<a class="sourceLine" id="cb6-14" title="14"><span class="co">#&gt; 1 P1336 G7       Ludność wg miejsca zamieszk~ TRUE         &lt;list [0~ &lt;int ~</span></a>
+<a class="sourceLine" id="cb6-15" title="15"><span class="co">#&gt; 2 P1341 G7       Ludność wg pojedynczych roc~ TRUE         &lt;list [0~ &lt;int ~</span></a>
+<a class="sourceLine" id="cb6-16" title="16"><span class="co">#&gt; 3 P1342 G7       Ludność w wieku przedproduk~ TRUE         &lt;list [0~ &lt;int ~</span></a>
+<a class="sourceLine" id="cb6-17" title="17"><span class="co">#&gt; 4 P2137 G7       Ludność wg grup wieku i płci TRUE         &lt;list [0~ &lt;int ~</span></a>
+<a class="sourceLine" id="cb6-18" title="18"><span class="co">#&gt; # ... with 14 more rows</span></a></code></pre></div>
+</div>
+<div id="variables" class="section level3">
+<h3>Variables</h3>
+<p>Firstly you can list variables for given subject (subgroup):</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">get_variables</span>(<span class="st">&quot;P2425&quot;</span>)</a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="co">#&gt; # A tibble: 3 x 6</span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt;       id subjectId n1                   level measureUnitId measureUnitName</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt;    &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;                &lt;int&gt;         &lt;int&gt; &lt;chr&gt;          </span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt; 1  60559 P2425     ludność na 1 km2         6            26 osoba          </span></a>
+<a class="sourceLine" id="cb7-6" title="6"><span class="co">#&gt; 2 458238 P2425     gęstość zaludnienia~     6            26 osoba          </span></a>
+<a class="sourceLine" id="cb7-7" title="7"><span class="co">#&gt; 3 458603 P2425     zmiana liczby ludno~     6            26 osoba</span></a></code></pre></div>
+<p>Secondly you can direct search variables with <code>search_variables()</code>. You can use empty string as <code>name</code> to list all variables but I strongly advise against as it has around 40 000 rows and you will probably hit data limit.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">search_variables</span>(<span class="st">&quot;samochod&quot;</span>)</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="co">#&gt; # A tibble: 399 x 8</span></a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt;      id subjectId n1      n2      level measureUnitId measureUnitName n3   </span></a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;   &lt;int&gt;         &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;</span></a>
+<a class="sourceLine" id="cb8-5" title="5"><span class="co">#&gt; 1  1688 P1883     samoch~ ogółem      6             9 szt.            &lt;NA&gt; </span></a>
+<a class="sourceLine" id="cb8-6" title="6"><span class="co">#&gt; 2  1689 P1883     samoch~ gospod~     6             9 szt.            &lt;NA&gt; </span></a>
+<a class="sourceLine" id="cb8-7" title="7"><span class="co">#&gt; 3  1690 P1883     samoch~ ogółem      6             9 szt.            &lt;NA&gt; </span></a>
+<a class="sourceLine" id="cb8-8" title="8"><span class="co">#&gt; 4  1691 P1883     samoch~ gospod~     6             9 szt.            &lt;NA&gt; </span></a>
+<a class="sourceLine" id="cb8-9" title="9"><span class="co">#&gt; # ... with 395 more rows</span></a></code></pre></div>
+<p>You can narrow search to given subject - subgroup:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">search_variables</span>(<span class="st">&quot;lud&quot;</span>, <span class="dt">subjectId =</span> <span class="st">&quot;P2425&quot;</span>)</a>
+<a class="sourceLine" id="cb9-2" title="2"><span class="co">#&gt; # A tibble: 3 x 6</span></a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="co">#&gt;       id subjectId n1                   level measureUnitId measureUnitName</span></a>
+<a class="sourceLine" id="cb9-4" title="4"><span class="co">#&gt;    &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;                &lt;int&gt;         &lt;int&gt; &lt;chr&gt;          </span></a>
+<a class="sourceLine" id="cb9-5" title="5"><span class="co">#&gt; 1  60559 P2425     ludność na 1 km2         6            26 osoba          </span></a>
+<a class="sourceLine" id="cb9-6" title="6"><span class="co">#&gt; 2 458238 P2425     gęstość zaludnienia~     6            26 osoba          </span></a>
+<a class="sourceLine" id="cb9-7" title="7"><span class="co">#&gt; 3 458603 P2425     zmiana liczby ludno~     6            26 osoba</span></a></code></pre></div>
+</div>
+</div>
+<div id="downloading-data" class="section level2">
+<h2>Downloading data</h2>
+<p>If you picked unit and variable codes you are ready to download data. You can do this two ways: - Download data of multiple variables on single unit <code>get_data_by_unit()</code> - Download data of single variable on multiple units <code>get_data_by_variable()</code></p>
+<div id="single-unit-multiple-variables" class="section level3">
+<h3>Single unit, multiple variables</h3>
+<p>We will use <code>get_data_by_unit()</code>. We specify our single unit as <code>unitId</code> string argument and variables by vector of strings. Optionally we can specify interested years of data. If not all available years.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">get_data_by_unit</span>(<span class="dt">unitId =</span> <span class="st">&quot;023200000000&quot;</span>, <span class="dt">varId =</span>  <span class="st">&quot;3643&quot;</span>)</a>
+<a class="sourceLine" id="cb10-2" title="2"><span class="co">#&gt; # A tibble: 20 x 6</span></a>
+<a class="sourceLine" id="cb10-3" title="3"><span class="co">#&gt;   id    measureUnitId lastUpdate              year    val attrId</span></a>
+<a class="sourceLine" id="cb10-4" title="4"><span class="co">#&gt;   &lt;chr&gt;         &lt;int&gt; &lt;chr&gt;                   &lt;chr&gt; &lt;dbl&gt;  &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb10-5" title="5"><span class="co">#&gt; 1 3643             26 2019-05-22T16:15:20.397 1999      1      1</span></a>
+<a class="sourceLine" id="cb10-6" title="6"><span class="co">#&gt; 2 3643             26 2019-05-22T16:15:20.397 2000      2      1</span></a>
+<a class="sourceLine" id="cb10-7" title="7"><span class="co">#&gt; 3 3643             26 2019-05-22T16:15:20.397 2001      4      1</span></a>
+<a class="sourceLine" id="cb10-8" title="8"><span class="co">#&gt; 4 3643             26 2019-05-22T16:15:20.397 2002      3      1</span></a>
+<a class="sourceLine" id="cb10-9" title="9"><span class="co">#&gt; # ... with 16 more rows</span></a>
+<a class="sourceLine" id="cb10-10" title="10"><span class="kw">get_data_by_unit</span>(<span class="dt">unitId =</span> <span class="st">&quot;023200000000&quot;</span>, <span class="dt">varId =</span>  <span class="kw">c</span>(<span class="st">&quot;3643&quot;</span>, <span class="st">&quot;2137&quot;</span>, <span class="st">&quot;148190&quot;</span>))</a>
+<a class="sourceLine" id="cb10-11" title="11"><span class="co">#&gt; # A tibble: 49 x 6</span></a>
+<a class="sourceLine" id="cb10-12" title="12"><span class="co">#&gt;   id    measureUnitId lastUpdate              year    val attrId</span></a>
+<a class="sourceLine" id="cb10-13" title="13"><span class="co">#&gt;   &lt;chr&gt;         &lt;int&gt; &lt;chr&gt;                   &lt;chr&gt; &lt;dbl&gt;  &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb10-14" title="14"><span class="co">#&gt; 1 2137             18 2018-09-25T14:54:06.187 1998  10402      1</span></a>
+<a class="sourceLine" id="cb10-15" title="15"><span class="co">#&gt; 2 2137             18 2018-09-25T14:54:06.187 1999  95582      1</span></a>
+<a class="sourceLine" id="cb10-16" title="16"><span class="co">#&gt; 3 2137             18 2018-09-25T14:54:06.187 2000  12977      1</span></a>
+<a class="sourceLine" id="cb10-17" title="17"><span class="co">#&gt; 4 2137             18 2018-09-25T14:54:06.187 2001   1486      1</span></a>
+<a class="sourceLine" id="cb10-18" title="18"><span class="co">#&gt; # ... with 45 more rows</span></a></code></pre></div>
+<p>To get more information about data we can add <code>type</code> argument and set it to <code>&quot;label&quot;</code> to add additional column with variable info.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">df &lt;-<span class="st"> </span><span class="kw">get_data_by_unit</span>(<span class="dt">unitId =</span> <span class="st">&quot;023200000000&quot;</span>, <span class="dt">varId =</span>  <span class="st">&quot;3643&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;label&quot;</span>)</a></code></pre></div>
+</div>
+<div id="multiple-units-single-variable" class="section level3">
+<h3>Multiple units, single variable</h3>
+<p>We will use <code>get_data_by_variable()</code>. We specify our single variable as <code>varId</code> string argument. If no <code>unitParentId</code> is provided function will return all available units for given variable. Setting <code>unitParentId</code> will return all available children units (on all levels). To narrow units level set <code>unitLevel</code>. Optionally we can specify interested years of data. If not all available years.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">get_data_by_variable</span>(<span class="st">&quot;420&quot;</span>, <span class="dt">unitParentId =</span> <span class="st">&quot;011210000000&quot;</span>)</a>
+<a class="sourceLine" id="cb12-2" title="2"><span class="co">#&gt; # A tibble: 294 x 5</span></a>
+<a class="sourceLine" id="cb12-3" title="3"><span class="co">#&gt;   id           name               year     val attrId</span></a>
+<a class="sourceLine" id="cb12-4" title="4"><span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt;              &lt;chr&gt;  &lt;dbl&gt;  &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb12-5" title="5"><span class="co">#&gt; 1 011210000000 REGION MAŁOPOLSKIE 1995   75956      1</span></a>
+<a class="sourceLine" id="cb12-6" title="6"><span class="co">#&gt; 2 011210000000 REGION MAŁOPOLSKIE 1996   98534      1</span></a>
+<a class="sourceLine" id="cb12-7" title="7"><span class="co">#&gt; 3 011210000000 REGION MAŁOPOLSKIE 1997  127267      1</span></a>
+<a class="sourceLine" id="cb12-8" title="8"><span class="co">#&gt; 4 011210000000 REGION MAŁOPOLSKIE 1998  148881      1</span></a>
+<a class="sourceLine" id="cb12-9" title="9"><span class="co">#&gt; # ... with 290 more rows</span></a>
+<a class="sourceLine" id="cb12-10" title="10"><span class="kw">get_data_by_variable</span>(<span class="st">&quot;420&quot;</span>, <span class="dt">unitLevel =</span> <span class="st">&quot;3&quot;</span>)</a>
+<a class="sourceLine" id="cb12-11" title="11"><span class="co">#&gt; # A tibble: 369 x 5</span></a>
+<a class="sourceLine" id="cb12-12" title="12"><span class="co">#&gt;   id           name               year     val attrId</span></a>
+<a class="sourceLine" id="cb12-13" title="13"><span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt;              &lt;chr&gt;  &lt;dbl&gt;  &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb12-14" title="14"><span class="co">#&gt; 1 011210000000 REGION MAŁOPOLSKIE 1995   75956      1</span></a>
+<a class="sourceLine" id="cb12-15" title="15"><span class="co">#&gt; 2 011210000000 REGION MAŁOPOLSKIE 1996   98534      1</span></a>
+<a class="sourceLine" id="cb12-16" title="16"><span class="co">#&gt; 3 011210000000 REGION MAŁOPOLSKIE 1997  127267      1</span></a>
+<a class="sourceLine" id="cb12-17" title="17"><span class="co">#&gt; 4 011210000000 REGION MAŁOPOLSKIE 1998  148881      1</span></a>
+<a class="sourceLine" id="cb12-18" title="18"><span class="co">#&gt; # ... with 365 more rows</span></a></code></pre></div>
+</div>
+</div>
+<div id="useful-tools" class="section level2">
+<h2>Useful tools</h2>
+<p>The <code>bdl</code> package provide couple of additional functions for summarizing and visualizing data.</p>
+<div id="summary" class="section level3">
+<h3>Summary</h3>
+<p>Data downloaded via <code>get_data_by_unit()</code> or <code>get_data_by_variable()</code> and their locality versions can be easily summarized by <code>summary()</code>:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">df &lt;-<span class="st"> </span><span class="kw">get_data_by_variable</span>(<span class="dt">varId =</span> <span class="st">&quot;3643&quot;</span>, <span class="dt">unitParentId =</span> <span class="st">&quot;010000000000&quot;</span>)</a>
+<a class="sourceLine" id="cb13-2" title="2"><span class="kw">summary</span>(df)</a>
+<a class="sourceLine" id="cb13-3" title="3"><span class="co">#&gt; # A tibble: 5 x 7</span></a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="co">#&gt; # Groups:   id [5]</span></a>
+<a class="sourceLine" id="cb13-5" title="5"><span class="co">#&gt;   id           name                    mean   std   min   max variance</span></a>
+<a class="sourceLine" id="cb13-6" title="6"><span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt;                  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb13-7" title="7"><span class="co">#&gt; 1 010000000000 MAKROREGION POŁUDNIOWY  8.35  2.18     4    12     4.77</span></a>
+<a class="sourceLine" id="cb13-8" title="8"><span class="co">#&gt; 2 011200000000 MAŁOPOLSKIE             3.1   1.62     1     6     2.62</span></a>
+<a class="sourceLine" id="cb13-9" title="9"><span class="co">#&gt; 3 011210000000 REGION MAŁOPOLSKIE      3.1   1.62     1     6     2.62</span></a>
+<a class="sourceLine" id="cb13-10" title="10"><span class="co">#&gt; 4 012400000000 ŚLĄSKIE                 5.25  1.29     2     7     1.67</span></a>
+<a class="sourceLine" id="cb13-11" title="11"><span class="co">#&gt; # ... with 1 more row</span></a></code></pre></div>
+</div>
+<div id="plotting" class="section level3">
+<h3>Plotting</h3>
+<p>Plotting functions in this package are interfaces to data downloading functions. Some of them require specifying <code>data_type</code> - method for downloading data and rest of arguments will be relevant to specified <code>data_type</code> function. Check documentation for more details.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="kw">line_plot</span>(<span class="dt">data_type =</span> <span class="st">&quot;unit&quot;</span>, <span class="dt">unitId =</span> <span class="st">&quot;000000000000&quot;</span>, <span class="dt">varId =</span> <span class="kw">c</span>(<span class="st">&quot;415&quot;</span>,<span class="st">&quot;420&quot;</span>))</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="kw">pie_plot</span>(<span class="dt">data_type =</span><span class="st">&quot;variable&quot;</span> ,<span class="st">&quot;60559&quot;</span>, <span class="st">&quot;2006&quot;</span>, <span class="dt">unitLevel =</span> <span class="st">&quot;2&quot;</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Scatter plot is unique - requires vector of only 2 variables.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1"><span class="kw">scatter_2var_plot</span>(<span class="dt">data_type =</span><span class="st">&quot;variable&quot;</span> ,<span class="kw">c</span>(<span class="st">&quot;60559&quot;</span>,<span class="st">&quot;415&quot;</span>), <span class="dt">unitLevel =</span> <span class="st">&quot;2&quot;</span>)</a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="co">#&gt; Joining, by = c(&quot;id&quot;, &quot;name&quot;, &quot;year&quot;)</span></a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="map-generation" class="section level3">
+<h3>Map generation</h3>
+<p>With <code>bdl</code> package comes <code>bdl.maps</code> dataset containing spatial maps for each Poland’s level. <code>generate_map()</code> use them to generate maps filled with bdl data. Use <code>unitLevel</code> to change type of map. The lower level is chosen the slower map will generate as it has more spatial data to process. This function requires external map data “bdl.maps” loaded to global environment. You can get data here:</p>
+<p><a href="https://github.com/statisticspoland/R_Package_to_API_BDL/releases/download/1.0.0/bdl.maps.RData">Map download</a>.</p>
+<p>Download data file and double-click to load it to environment.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="kw">generate_map</span>(<span class="dt">varId =</span> <span class="st">&quot;60559&quot;</span>, <span class="dt">year =</span> <span class="st">&quot;2017&quot;</span>, <span class="dt">unitLevel =</span> <span class="dv">3</span>)</a></code></pre></div>
+</div>
+<div id="multi-download" class="section level3">
+<h3>Multi download</h3>
+<p>Downloading functions <code>get_data_by_unit()</code> and <code>get_data_by_variable()</code> have alternative “multi” downloading mode. Function that would work for example single unit, if provided a vector will make additional column with values for each unit provided:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1"><span class="kw">get_data_by_unit</span>(<span class="dt">unitId =</span> <span class="kw">c</span>(<span class="st">&quot;023200000000&quot;</span>, <span class="st">&quot;020800000000&quot;</span>), <span class="dt">varId =</span>  <span class="kw">c</span>(<span class="st">&quot;3643&quot;</span>, <span class="st">&quot;2137&quot;</span>, <span class="st">&quot;148190&quot;</span>))</a>
+<a class="sourceLine" id="cb18-2" title="2"><span class="co">#&gt; Joining, by = c(&quot;id&quot;, &quot;year&quot;)</span></a>
+<a class="sourceLine" id="cb18-3" title="3"><span class="co">#&gt; # A tibble: 49 x 4</span></a>
+<a class="sourceLine" id="cb18-4" title="4"><span class="co">#&gt;   id    year  val_023200000000 val_020800000000</span></a>
+<a class="sourceLine" id="cb18-5" title="5"><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;            &lt;dbl&gt;            &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb18-6" title="6"><span class="co">#&gt; 1 2137  1998             10402            10929</span></a>
+<a class="sourceLine" id="cb18-7" title="7"><span class="co">#&gt; 2 2137  1999             95582            10125</span></a>
+<a class="sourceLine" id="cb18-8" title="8"><span class="co">#&gt; 3 2137  2000             12977             2190</span></a>
+<a class="sourceLine" id="cb18-9" title="9"><span class="co">#&gt; 4 2137  2001              1486             2340</span></a>
+<a class="sourceLine" id="cb18-10" title="10"><span class="co">#&gt; # ... with 45 more rows</span></a></code></pre></div>
+<p>Or multiple variables for <code>get_data_by_variable()</code>:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="kw">get_data_by_variable</span>(<span class="dt">varId =</span><span class="kw">c</span>(<span class="st">&quot;3643&quot;</span>,<span class="st">&quot;420&quot;</span>), <span class="dt">unitParentId =</span> <span class="st">&quot;010000000000&quot;</span>)</a>
+<a class="sourceLine" id="cb19-2" title="2"><span class="co">#&gt; Joining, by = c(&quot;id&quot;, &quot;name&quot;, &quot;year&quot;)</span></a>
+<a class="sourceLine" id="cb19-3" title="3"><span class="co">#&gt; # A tibble: 100 x 5</span></a>
+<a class="sourceLine" id="cb19-4" title="4"><span class="co">#&gt;   id           name                   year  val_3643 val_420</span></a>
+<a class="sourceLine" id="cb19-5" title="5"><span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt;                  &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb19-6" title="6"><span class="co">#&gt; 1 010000000000 MAKROREGION POŁUDNIOWY 1999        12  225459</span></a>
+<a class="sourceLine" id="cb19-7" title="7"><span class="co">#&gt; 2 010000000000 MAKROREGION POŁUDNIOWY 2000         9  129602</span></a>
+<a class="sourceLine" id="cb19-8" title="8"><span class="co">#&gt; 3 010000000000 MAKROREGION POŁUDNIOWY 2001        10  140821</span></a>
+<a class="sourceLine" id="cb19-9" title="9"><span class="co">#&gt; 4 010000000000 MAKROREGION POŁUDNIOWY 2002         8   78668</span></a>
+<a class="sourceLine" id="cb19-10" title="10"><span class="co">#&gt; # ... with 96 more rows</span></a></code></pre></div>
+<p>This type of downloading is removing some of columns from original “single” data download.</p>
+<p>This mode works for locality version as well.</p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
