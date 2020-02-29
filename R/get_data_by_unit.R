@@ -55,28 +55,38 @@ get_data_by_unit <- function(unitId, varId, year = NULL,
     
     filters <- list(year = year, "var-Id" = varId, "aggregate-Id" = aggregateId, lang = lang)
     df <- page_download(dir, unitId, filters, ...)
+    df <- add_attribute_labels(df, lang)
     
   } else {
     unitId <- as.list(unitId)
     
     helper <- function(x) {
-      temp <- get_data_by_unit(x, varId = varId, aggregateId = aggregateId, year = year, lang = lang)
+      temp <- try(get_data_by_unit(x, varId = varId, aggregateId = aggregateId, year = year, lang = lang), silent = T)
       colname <- paste0("val_", x, sep = "")
       names(temp)[names(temp) == "val"] <- colname
+      
+      temp <- add_attribute_labels(temp, lang)
+
+      colname <- paste0("lastUpdate_", x, sep = "")
+      names(temp)[names(temp) == "lastUpdate"] <- colname
+      
+      colname <- paste0("attrId_", x, sep = "")
+      names(temp)[names(temp) == "attrId"] <- colname
+
+      if(type == "label"){
+        colname <- paste0("attributeDescription_", x, sep = "")
+        names(temp)[names(temp) == "attributeDescription"] <- colname
+      }else{
+        temp <- dplyr::select(temp,-dplyr::one_of(c("attributeDescription")))
+      }
       temp
     }
     
-    # df <- lapply(unitId, get_data_by_unit, varId = varId, aggregateId = aggregateId, year = year, lang = lang)
     df <- lapply(unitId, helper)
-    
-    helper = function(x) dplyr::select(x,-dplyr::one_of(c("attrId", "measureUnitId", "lastUpdate")))
-    df <- lapply(df, helper)
-    
+    df <- df[lengths(df) != 0]
     df <- purrr::reduce(df, dplyr::left_join)
-    
-    # helper <- function(x) paste("val_", x, sep = "")
-    # unitId <- lapply(unitId, helper)
-    # names(df)[-c(1:2)] <- unlist(unitId)
+    df <- df %>% select(one_of("id", "year"), starts_with("val"), 
+                        starts_with("measure"), starts_with("attr"),everything())
   }
 
   
@@ -91,23 +101,10 @@ get_data_by_unit <- function(unitId, varId, year = NULL,
     measure_labels <- lapply(variables, get_measure_label, lang = lang)
     names(measure_labels) <- variables
 
-    if(length(unitId) == 1){
-      attributes <- unique(df$attrId)
-      
-      attribute_labels <- lapply(attributes, get_attr_label, lang = lang)
-      names(attribute_labels) <- attributes
-      
-      df <- df %>%
-        dplyr::mutate(variableName = as.character(variable_labels[as.character(df$id)])) %>%
-        dplyr::mutate(measureName = as.character(measure_labels[as.character(df$id)]))  %>%
-        dplyr::mutate(attributeDescription = as.character(attribute_labels[as.character(df$attrId)]))
-    } else if (length(unitId) > 1) {
-      df <- df %>%
-        dplyr::mutate(variableName = as.character(variable_labels[as.character(df$id)])) %>%
-        dplyr::mutate(measureName = as.character(measure_labels[as.character(df$id)]))  
-    }
-    
-
+    df <- df %>%
+      dplyr::mutate(variableName = as.character(variable_labels[as.character(df$id)])) %>%
+      dplyr::mutate(measureName = as.character(measure_labels[as.character(df$id)])) %>%
+      select(one_of("id", "year"), starts_with("val"), "variableName", starts_with("measure"), starts_with("attr"),everything())
   }
 
   df$id <- as.character(df$id)

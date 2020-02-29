@@ -4,9 +4,17 @@
 \alias{pie_plot}
 \title{Generate quick pie plot}
 \usage{
-pie_plot(data_type = c("variable", "variable.locality"), varId, year,
-  unitParentId = NULL, unitLevel = NULL, aggregateId = NULL,
-  lang = c("pl", "en"), ...)
+pie_plot(
+  data_type = c("variable", "variable.locality"),
+  varId,
+  year,
+  unitParentId = NULL,
+  unitLevel = NULL,
+  aggregateId = NULL,
+  label = T,
+  lang = c("pl", "en"),
+  ...
+)
 }
 \arguments{
 \item{data_type}{A type of data used for generating plot, "variable"(default), "variable","variable.locality"}
@@ -24,6 +32,8 @@ pie_plot(data_type = c("variable", "variable.locality"), varId, year,
 If \code{NULL} (default) no level filters apply. Use \code{\link{get_levels}} to find more info.}
 
 \item{aggregateId}{An aggregate id. Use \code{\link{get_aggregates}} for more info.}
+
+\item{label}{Logical; if TRUE (default) adds labels.}
 
 \item{lang}{A language of returned data, "pl" (default), "en"}
 
@@ -49,7 +59,7 @@ Generate quickly `ggplot2` plot, using BDL data.
 }
 \examples{
 \donttest{
-   pie_plot(data_type ="variable" ,"60559", "2006", unitLevel = "2")
+   pie_plot(data_type ="variable" ,"1", "2018",unitParentId="042214300000", unitLevel = "6")
 }
    
 }

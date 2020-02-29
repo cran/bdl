@@ -4,8 +4,12 @@
 \alias{search_subjects}
 \title{Search for subject codes}
 \usage{
-search_subjects(name, sort = c("id", "-id", "name", "-name"),
-  lang = c("pl", "en"), ...)
+search_subjects(
+  name,
+  sort = c("id", "-id", "name", "-name"),
+  lang = c("pl", "en"),
+  ...
+)
 }
 \arguments{
 \item{name}{A phrase to search.}
@@ -31,7 +35,7 @@ To use a proxy to connect, a \code{\link[httr]{use_proxy}} can be
 }
 \examples{
  \donttest{
-    earch_subjects("samochody")
+    search_subjects("samochody")
     search_subjects("cars", lang  = "en")
 }
 }

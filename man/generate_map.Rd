@@ -4,8 +4,20 @@
 \alias{generate_map}
 \title{Generate quick map}
 \usage{
-generate_map(varId, year, unitLevel = 2, unitParentId = NULL,
-  aggregateId = NULL, lang = c("pl", "en"), ...)
+generate_map(
+  varId,
+  year,
+  unitLevel = 2,
+  unitParentId = NULL,
+  aggregateId = NULL,
+  palette = "Blues",
+  style = NULL,
+  n = 10,
+  names = FALSE,
+  borderLevel = NULL,
+  lang = c("pl", "en"),
+  ...
+)
 }
 \arguments{
 \item{varId}{A single variable Id.
@@ -19,6 +31,19 @@ Use \code{\link{search_variables}} or \code{\link{get_variables}} to find variab
 \code{\link{get_units}} to find unit id code.}
 
 \item{aggregateId}{An aggregate id. Use \code{\link{get_aggregates}} for more info.}
+
+\item{palette}{A palette name or a vector of colors. See tmaptools::palette_explorer() for the named palettes.
+Use a "-" as prefix to reverse the palette.}
+
+\item{style}{Method to process the color scale. Options available are "sd", "equal", "pretty", 
+"quantile", "kmeans", "hclust", "bclust", "fisher", "jenks", and "log10_pretty".}
+
+\item{n}{Preferred number of classes. Default is 10.}
+
+\item{names}{Logical that determines whether the unit names are shown.}
+
+\item{borderLevel}{Adds contours of units on specified level - number from 1 to 6. 
+Use \code{\link{get_levels}} to find more info.}
 
 \item{lang}{A language of returned data, "pl" (default), "en"}
 
@@ -34,7 +59,7 @@ Generate given NUTS level map with data from given variable
 \details{
 Generate quickly map for given NUTS level, using BDL data. Default level is 2.
   
-  Maps available for year: 2010-2018
+  Maps available for year: 2010-2020
   
   Provide unit parent id to narrow the map for specific regions.
   
@@ -42,7 +67,7 @@ Generate quickly map for given NUTS level, using BDL data. Default level is 2.
   
   This function requires external map data "bdl.maps" loaded to global environment. 
   You can get data here:
-  \href{https://github.com/statisticspoland/R_Package_to_API_BDL/releases/download/1.0.0/bdl.maps.RData}{Map 
+  \href{https://github.com/statisticspoland/R_Package_to_API_BDL/releases/tag/1.0.1}{Map 
   download}.
   Download data and double-click to load it to environment.
 

@@ -3,7 +3,7 @@
 #' @details
 #'   Generate quickly map for given NUTS level, using BDL data. Default level is 2.
 #'   
-#'   Maps available for year: 2010-2018
+#'   Maps available for year: 2010-2020
 #'   
 #'   Provide unit parent id to narrow the map for specific regions.
 #'   
@@ -11,7 +11,7 @@
 #'   
 #'   This function requires external map data "bdl.maps" loaded to global environment. 
 #'   You can get data here:
-#'   \href{https://github.com/statisticspoland/R_Package_to_API_BDL/releases/download/1.0.0/bdl.maps.RData}{Map 
+#'   \href{https://github.com/statisticspoland/R_Package_to_API_BDL/releases/tag/1.0.1}{Map 
 #'   download}.
 #'   Download data and double-click to load it to environment.
 #' 
@@ -27,6 +27,14 @@
 #' @param unitParentId A 12 character NUTS id code of interested unit. Use \code{\link{search_units}} or
 #'   \code{\link{get_units}} to find unit id code.
 #' @param aggregateId An aggregate id. Use \code{\link{get_aggregates}} for more info.
+#' @param palette A palette name or a vector of colors. See tmaptools::palette_explorer() for the named palettes.
+#'  Use a "-" as prefix to reverse the palette.
+#' @param style Method to process the color scale. Options available are "sd", "equal", "pretty", 
+#' "quantile", "kmeans", "hclust", "bclust", "fisher", "jenks", and "log10_pretty".
+#' @param n Preferred number of classes. Default is 10.
+#' @param names Logical that determines whether the unit names are shown.
+#' @param borderLevel Adds contours of units on specified level - number from 1 to 6. 
+#' Use \code{\link{get_levels}} to find more info.
 #' @param lang  A language of returned data, "pl" (default), "en"
 #' @param ... Other arguments passed on to \code{\link[httr]{GET}}. For example
 #'   a proxy parameters, see details.
@@ -40,16 +48,9 @@
 #' \donttest{
 #'  generate_map(varId = "60559", year = "2017")
 #'  }
-generate_map <- function(varId, year, unitLevel = 2, unitParentId = NULL, aggregateId = NULL, lang = c("pl","en"), ...) {
-  if(!exists("bdl.maps") || !is.list(bdl.maps)){
-    stop(paste0("This function requires external map data \"bdl.maps\" loaded to global environment. \n\n",
-                "You can get data here: \n",
-                "https://github.com/statisticspoland/R_Package_to_API_BDL/releases/download/1.0.0/bdl.maps.RData \n\n",
-                "Download data and double-click to load it to environment."))
-      
-  }
-  
-  if (length(varId) == 1 && length(year) == 1 && (year >= 2010 && year <=2018)) {
+generate_map <- function(varId, year, unitLevel = 2, unitParentId = NULL, aggregateId = NULL, palette = "Blues", 
+                         style = NULL, n = 10, names = FALSE, borderLevel = NULL, lang = c("pl","en"), ...) {
+  if (length(varId) == 1 && length(year) == 1 && (year >= 2010 && year <=2020)) {
     if(is.null(unitLevel) || !(unitLevel >= 1 && unitLevel <=6)){
       stop("Wrong unitLevel selected.")
     }
@@ -61,106 +62,95 @@ generate_map <- function(varId, year, unitLevel = 2, unitParentId = NULL, aggreg
     df <- dplyr::select(df, -"name")
     
     
-    if(unitLevel == 1){
-      selected_map <- bdl.maps$level1_map
-      shape <- dplyr::inner_join(selected_map, df, by = "id")
-    }
-    if(unitLevel == 2){
-      selected_map <- bdl.maps$level2_map
-      shape <- dplyr::inner_join(selected_map, df, by = "id")
-    }
-    if(unitLevel == 3){
-      selected_map <- bdl.maps$level3_map
-      shape <- dplyr::inner_join(selected_map, df, by = "id")
-    }
-    if(unitLevel == 4){
-      selected_map <- bdl.maps$level4_map
-      shape <- dplyr::inner_join(selected_map, df, by = "id")
-    }
-    if(unitLevel == 5){
-      tempyear<- year
-      shape <- dplyr::inner_join(bdl.maps$level5_map_units, df, by = "id")
-      geo <- as.data.frame(shape) 
+    home <- Sys.getenv("HOME")
+    file_name <- paste0("bdl.maps.", year, ".RData")
+    object_name <- paste0("bdl.maps.", year)
+    map_file <- paste0(home, "/", file_name)
+    
+    if(!exists(object_name)){
       
-      tempchanges <- bdl.maps$level5_map_changes
-      tempchanges <- as.data.frame(dplyr::filter(tempchanges, year <= tempyear))
-      
-      for(val in 1:nrow(geo)) {
-        if(geo[val,1] %in% tempchanges$id){
-          geo[val,2] <- tempchanges[tempchanges$id == geo[val,1],2]
-          geo[val,6] <- tempchanges[tempchanges$id == geo[val,1],4]
-        }
-      }
-      
-      
-      sf::st_geometry(geo) <- sf::st_sfc(geo$geometry)
-      sf::st_geometry(shape) <- sf::st_geometry(geo)
-      
-      shape <- suppressWarnings(tmaptools::set_projection(shape, projection = tmaptools::get_proj4(tmaptools::get_projection(bdl.maps$level5_map_units)), 
-                                                 current.projection = tmaptools::get_proj4(tmaptools::get_projection(bdl.maps$level5_map_units))))
-     
+      file_exist <- try(suppressWarnings(load(map_file)), silent = T)
 
-    }
-    if(unitLevel == 6){
-      tempyear<- year
-      shape <- dplyr::inner_join(bdl.maps$level6_map_units, df, by = "id")
-      geo <- as.data.frame(shape) 
-      
-      tempchanges <- bdl.maps$level6_map_changes
-      tempchanges <- as.data.frame(dplyr::filter(tempchanges, year <= tempyear))
-      
-      
-      for(val in 1:nrow(geo)) {
-        if(geo[val,1] %in% tempchanges$id){
-          geo[val,2] <- tempchanges[tempchanges$id == geo[val,1],2]
-          geo[val,6] <- tempchanges[tempchanges$id == geo[val,1],4]
-          
+      if(is.error(file_exist)){
+        download <- try(download.file(paste0("https://github.com/statisticspoland/R_Package_to_API_BDL/releases/download/1.0.1/", file_name), map_file, "auto"))
+        if(is.error(download)){
+          stop()
+        }else{
+          file_exist2 <- try(suppressWarnings(load(map_file)), silent = T)
+          if(!exists(object_name)){
+            stop( paste0("Loading map files has failed. Try to Restart your R session or remove any \n",
+                         "bdl.maps.xxxx.RData files and download them manually from: \n",
+                         "https://github.com/statisticspoland/R_Package_to_API_BDL/releases/tag/1.0.1\n",
+                         "and put them into your Home direcotry: ", home))
+          }
         }
       }
-      sf::st_geometry(geo) <- sf::st_sfc(geo$geometry)
-      sf::st_geometry(shape) <- sf::st_geometry(geo)
-      
-      
-      shape <- suppressWarnings(tmaptools::set_projection(shape, projection = tmaptools::get_proj4(tmaptools::get_projection(bdl.maps$level6_map_units)), 
-                                                          current.projection = tmaptools::get_proj4(tmaptools::get_projection(bdl.maps$level6_map_units))))
-      
-      
-    } 
+    }
     
-    is.error <- function(x) inherits(x, "try-error")
+    selected_map <- get(object_name)
+    if(toString(unitLevel) == "1") selected_map <- selected_map$level1
+    if(toString(unitLevel) == "2") selected_map <- selected_map$level2
+    if(toString(unitLevel) == "3") selected_map <- selected_map$level3
+    if(toString(unitLevel) == "4") selected_map <- selected_map$level4
+    if(toString(unitLevel) == "5") selected_map <- selected_map$level5
+    if(toString(unitLevel) == "6") selected_map <- selected_map$level6
     
     
+    shape <- dplyr::inner_join(selected_map, df, by = "id") 
+
+    shape <- lwgeom::st_make_valid(shape)
+
     if(!inherits(shape, "sf")) class(shape) <- c("sf")
     
+    label <- paste0(get_var_label(varId, lang = lang)," - ",year)
     
-    label <- paste0(get_var_label(varId)," - ",year)
-
-    map <- try(tmap::tmap_leaflet(tmap::tm_shape(shape) +
-                    tmap::tm_polygons(col = "val", id = "name", style ="cont", palette="Blues", n=10, title = "", contrast = c(-0.1, 1)) +
-                    tmap::tm_layout(title = label)), silent = T)
-
-    if(is.error(map)) {
-      return(generate_map(varId, year, unitLevel, unitParentId, aggregateId, lang, ...))
-    }else {
-      return(map)
+    if(is.null(style)){
+      map <- tmap::tm_shape(shape) +
+        tmap::tm_polygons(col = "val", id = "val",
+                          palette = palette, n = n,
+                          # contrast = c(-0.1, 1),
+                          title = get_measure_label(varId = varId), 
+                          popup.vars = c(" " = "name", " " = "attributeDescription"),
+                          legend.reverse = T, legend.format = list(text.separator = "-")) +
+        tmap::tm_layout(title = label)
+    } else {
+      map <- tmap::tm_shape(shape) +
+        tmap::tm_polygons(col = "val", id = "val",
+                          palette = palette, n = n,
+                          style = style,
+                          title = get_measure_label(varId = varId), 
+                          popup.vars = c(" " = "name", " " = "attributeDescription"),
+                          legend.reverse = T, legend.format = list(text.separator = "-")) +
+        tmap::tm_layout(title = label)
+    }
+      
+    if(names){
+      map <- map + tmap::tm_text(text = "name", size = "AREA") + tmap::tm_view(text.size.variable = TRUE)
     }
     
+    border_shape <- NULL
     
-    # tmap::tmap_mode("view")
+    all_maps <- get(object_name)
+    if(!is.null(borderLevel) && borderLevel == 1) border_shape <- all_maps$level1
+    if(!is.null(borderLevel) && borderLevel == 2) border_shape <- all_maps$level2
+    if(!is.null(borderLevel) && borderLevel == 3) border_shape <- all_maps$level3
+    if(!is.null(borderLevel) && borderLevel == 4) border_shape <- all_maps$level4
+    if(!is.null(borderLevel) && borderLevel == 5) border_shape <- all_maps$level5
+    if(!is.null(borderLevel) && borderLevel == 6) border_shape <- all_maps$level6
+    
+      
 
-    # error <- try(print(map), silent = T)
+    if(!is.null(borderLevel) & !is.null(border_shape)){
+      border_shape <- lwgeom::st_make_valid(border_shape)
+      map <- map + (tmap::tm_shape(border_shape) +
+        tmap::tm_borders(lwd = 1.8))
+    }
     
-    # if(is.error(error)) {
-    #   print("error trigg")
-    #   return(generate_map(varId, year, unitLevel, unitParentId, aggregateId, lang, ...))
-    # }else{
-    #   print("non error")
-    #   return(map)
-    # }
-
-    
+    map <- tmap::tmap_leaflet(map)
+   
+    map
     
   } else {
-    stop("You can generate map for single variable on single year within 2010-2018.")
+    stop("You can generate map for single variable on single year within 2010-2020.")
   }
 }

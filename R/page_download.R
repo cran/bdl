@@ -1,7 +1,6 @@
 #' @keywords internal
 page_download <- function(dir, id, filters, ...) {
   df <- tibble::tibble()
-
   repeat {
     json <- get_request(dir, id, filters, ...)
 
@@ -24,14 +23,25 @@ page_download <- function(dir, id, filters, ...) {
     } else {
       filters$page <- filters$page + 1
     }
-
+    Sys.sleep(0.65)
     if (is.null(json$links) || json$links$self == json$links$last) {
       break
     }
+    
   }
   if ("values" %in% colnames(df)) {
     df <- df %>%
       dplyr::select(-dplyr::one_of(c("values")))
   }
+  
+  if ("hasDescription" %in% colnames(df)) {
+    df <- df %>%
+      dplyr::rename( "unitHasChanged" = "hasDescription")
+    
+    if(TRUE %in% df$unitHasChanged){
+      warning("Unit metadata has changed during searched year interval. Check description using `unit_info()` or `unit_locality_info()` for localities.", call. = F)
+    }
+  }
+  
   df
 }

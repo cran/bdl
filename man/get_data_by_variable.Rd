@@ -4,8 +4,15 @@
 \alias{get_data_by_variable}
 \title{Get data by variable Id from BDL API}
 \usage{
-get_data_by_variable(varId, unitParentId = NULL, unitLevel = NULL,
-  year = NULL, aggregateId = NULL, lang = c("pl", "en"), ...)
+get_data_by_variable(
+  varId,
+  unitParentId = NULL,
+  unitLevel = NULL,
+  year = NULL,
+  aggregateId = NULL,
+  lang = c("pl", "en"),
+  ...
+)
 }
 \arguments{
 \item{varId}{A single variable Id or vector of multiple variable id's. If multiple id's are used, some columns
@@ -51,7 +58,7 @@ Data to retrieve from
    get_data_by_variable("420", year = "2000", unitLevel = 6)
    
    # Multi variable download
-   get_data_by_variable(varId =c("3643","420"), unitParentId = "010000000000")
+   get_data_by_variable(varId =c("415","420"), unitParentId = "030210423000")
 }
 }
 \keyword{database}

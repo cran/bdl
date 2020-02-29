@@ -44,8 +44,10 @@ line_plot <- function(data_type = c("unit","unit.locality","variable","variable.
     if (length(unitId) == 1) {
       
       df <- get_data_by_unit(unitId = unitId, varId = varId, year = year, type = "label", aggregateId = aggregateId, lang = lang, ...)
-      title <- unit_info(unitId)
-      plot <- ggpubr::ggline(df, x ="year", y ="val", color = "variableName", group ="variableName", title = title$name)
+      df$combined <- paste0(df$variableName, " [", df$measureName, "]")
+      
+      title <- unit_info(unitId, lang = lang)
+      plot <- ggpubr::ggline(df, x = "year", y = "val", color = "combined", group ="combined", title = title$name)
       
     } else {
       stop("You can line plot only 1 unit with multiple variables.")
@@ -57,10 +59,10 @@ line_plot <- function(data_type = c("unit","unit.locality","variable","variable.
       
       df <- get_data_by_unit_locality(unitId = unitId, varId = varId, year = year, type = "label", lang = lang, ...)
       
-     
+      df$combined <- paste0(df$variableName, " [", df$measureName, "]")
       
-      title <- unit_locality_info(unitId)
-      plot <- ggpubr::ggline(df, x ="year", y ="val", color = "variableName", group ="variableName", title = title$name)
+      title <- unit_locality_info(unitId, lang = lang)
+      plot <- ggpubr::ggline(df, x = "year", y = "val", color = "combined", group ="combined", title = title$name)
 
 
     } else {
@@ -72,8 +74,9 @@ line_plot <- function(data_type = c("unit","unit.locality","variable","variable.
       
       df <- get_data_by_variable(varId = varId, unitParentId = unitParentId, unitLevel = unitLevel, 
                                  year = year, aggregateId = aggregateId, lang = lang, ...)
-      title <- get_var_label(varId)
-      plot <- ggpubr::ggline(df, x ="year", y ="val", color = "name", group ="name", title = title)
+      title <- get_var_label(varId, lang = lang)
+      title <- paste0(title, " [", get_measure_label(varId, lang = lang),"]")
+      plot <- ggpubr::ggline(df, x ="year", y ="val", color = "name", group ="name", title = ifelse(is.null(unitParentId), title, paste0(title, " - Jednostka nadrz\u0119dna: ", toString(unitParentId))))
       
     } else {
       stop("You can line plot only 1 variable with multiple units.")
@@ -84,8 +87,9 @@ line_plot <- function(data_type = c("unit","unit.locality","variable","variable.
     if (length(varId) == 1) {
       
       df <- get_data_by_variable_locality(varId = varId, unitParentId = unitParentId, year = year, lang = lang, ...)
-      title <- get_var_label(varId)
-      plot <- ggpubr::ggline(df, x ="year", y ="val", color = "name", group ="name", title = title)
+      title <- get_var_label(varId, lang = lang)
+      title <- paste0(title, " [", get_measure_label(varId, lang = lang), "]")
+      plot <- ggpubr::ggline(df, x ="year", y ="val", color = "name", group ="name", title = ifelse(is.null(unitParentId), title, paste0(title, " - Jednostka nadrz\u0119dna: ", toString(unitParentId))))
       
     } else {
     stop("You can line plot only 1 variable with multiple units.")
@@ -94,9 +98,18 @@ line_plot <- function(data_type = c("unit","unit.locality","variable","variable.
   } else {
     stop("Wrong data_type parameter.")
   }
-  # if(nrow(df) > 20) {
-  #   plot <- ggpubr::ggpar(plot, legend = "none")
-  # }
+  
+  title <- plot$plot_env$title
+  if(!is.null(aggregateId) && (data_type == "variable" || data_type == "unit")){
+    dir <- "aggregates"
+    filters <- list(lang = lang)
+    
+    agg_lab <- get_request(dir, id = aggregateId, filters, ...)
+    title <- paste0(plot$plot_env$title, ", Aggregat: ", agg_lab$name)
+  }
+  
+  plot <- ggpubr::ggpar(plot, xlab = F, ylab = F, legend.title = "", title = title)
+  
   plot <- plot + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5))
   print(plot)
 }

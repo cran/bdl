@@ -20,6 +20,7 @@
 #'   (Used only with data_type equal "variable")
 #'   If \code{NULL} (default) no level filters apply. Use \code{\link{get_levels}} to find more info.
 #' @param aggregateId An aggregate id. Use \code{\link{get_aggregates}} for more info.
+#' @param label Logical; if TRUE (default) adds labels.
 #' @param lang A language of returned data, "pl" (default), "en"
 #' @param ... Other arguments passed on to \code{\link[httr]{GET}}. For example
 #'   a proxy parameters, see details.
@@ -30,12 +31,12 @@
 #'
 #' @examples
 #' \donttest{
-#'    pie_plot(data_type ="variable" ,"60559", "2006", unitLevel = "2")
+#'    pie_plot(data_type ="variable" ,"1", "2018",unitParentId="042214300000", unitLevel = "6")
 #' }
 #'    
 pie_plot <- function(data_type = c("variable","variable.locality"), 
                      varId, year, unitParentId = NULL, unitLevel = NULL, 
-                     aggregateId = NULL, lang = c("pl","en"), ...) {
+                     aggregateId = NULL, label = T, lang = c("pl","en"), ...) {
   data_type <- match.arg(data_type)
   df <- NULL
   if (length(varId) == 1 && length(year) == 1) {
@@ -53,15 +54,30 @@ pie_plot <- function(data_type = c("variable","variable.locality"),
     stop("You can pie plot only 1 variable with multiple units on 1 year.")
   }
   
-  title <- get_var_label(varId)
+  title <- get_var_label(varId, lang = lang)
   
-  plot <- ggpubr::ggpie(df, "val", fill = "name", label = "val", 
-                        color = "black", title = title, palette = randomcoloR::distinctColorPalette(nrow(df)))
-  plot <- plot + ggplot2::aes("", val, fill = "name", label = val)
-  plot <- ggpubr::ggpar(plot, legend = "right", legend.title = "", ticks = F)
-  
-  if(nrow(df) > 20) {
-    plot <- ggpubr::ggpar(plot, legend = "none", tickslab = F)
+  if(!is.null(aggregateId) && data_type == "variable"){
+    dir <- "aggregates"
+    filters <- list(lang = lang)
+    
+    agg_lab <- get_request(dir, id = aggregateId, filters, ...)
+    title <- paste0(title, " \nAggregat: ", agg_lab$name)
   }
+
+  if(label){
+    df$label <- df$val
+  }else{
+    df$label <- ""
+  }
+  
+  plot <- ggpubr::ggpie(df, "val", fill = "name", label = "label",
+                        color = "black", title = title, palette = randomcoloR::distinctColorPalette(nrow(df)))
+  plot <- plot + ggplot2::aes("", val, fill = "name", label = "label")
+  
+  
+  
+  plot <- ggpubr::ggpar(plot, legend = "right", legend.title = toString(year), ticks = F)
+  
+
   print(plot)
 }

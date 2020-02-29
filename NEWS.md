@@ -1,3 +1,23 @@
+# bdl 1.0.1
+
+* Improved variable label function to be more informative
+
+* Fixed no lang parameter pass in visualisation functions
+
+* Added new parameters to generate_map()
+
+* Various fixes to plot functions
+
+* Updated DESCRIPTION
+
+* Added new function get_panel_data() thanks to @IwoA
+
+* Improved multi variable/unit downloading
+
+* Added new maps for 2019 and 2020
+
+* Redisgned map downloading system
+
 # bdl 1.0.0
 
 * Increased map year range to 2010-2018

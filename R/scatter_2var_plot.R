@@ -32,12 +32,13 @@
 #'
 #' @examples
 #' \donttest{
-#'    scatter_2var_plot(data_type ="variable" ,c("60559","415"), unitLevel = "2")
+#'    scatter_2var_plot(data_type = "variable" ,c("415", "60559"), unitLevel = "2")
 #'  }
-scatter_2var_plot <- function(data_type = c("variable","variable.locality"), 
+scatter_2var_plot <- function(data_type = c("variable", "variable.locality"), 
                               varId, year = NULL, unitParentId = NULL, unitLevel = NULL, 
                               aggregateId = NULL, lang = c("pl","en"), ...) {
   data_type <- match.arg(data_type)
+  
   df <- NULL
   if (length(varId) == 2) {
     if (data_type == "variable") {
@@ -53,13 +54,19 @@ scatter_2var_plot <- function(data_type = c("variable","variable.locality"),
   } else {
     stop("You can scatter plot only 2 variables.")
   }
-  df <- tidyr::drop_na(df)
+  
   x_name <- paste0("val_", varId[1])
-  x_label <- get_var_label(varId[1])
+  x_label <- get_var_label(varId[1], lang = lang)
+
   
   y_name <- paste0("val_", varId[2])
-  y_label <- get_var_label(varId[2])
+  y_label <- get_var_label(varId[2], lang = lang)
+  
+  if(!all(c(x_name, y_name) %in% names(df))){
+    stop("One of variables returned empty data.")
+  }
 
+  df <- tidyr::drop_na(df)
   plot <- ggpubr::ggscatter(df, x = x_name, y = y_name, xlab = x_label, ylab = y_label,
             color = "name", size = 3, # Points color, shape and size
             add = "reg.line",  # Add regressin line
@@ -68,6 +75,18 @@ scatter_2var_plot <- function(data_type = c("variable","variable.locality"),
             cor.coef = TRUE, # Add correlation coefficient. see ?stat_cor
             cor.coeff.args = list(method = "pearson", label.x = 3, label.sep = "\n")
   )
+  
+  title <- ""
+  
+  if(!is.null(aggregateId) && data_type == "variable"){
+    dir <- "aggregates"
+    filters <- list(lang = lang)
+    
+    agg_lab <- get_request(dir, id = aggregateId, filters, ...)
+    title <- paste0("Aggregat: ", agg_lab$name)
+  }
+  
+  plot <- ggpubr::ggpar(plot, legend.title = paste0(min(df$year), "-", max(df$year)), title = title)
   
   print(plot)
 }
