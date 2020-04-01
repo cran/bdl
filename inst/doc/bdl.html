@@ -12,7 +12,7 @@
 
 <meta name="author" content="Krzysztof Kania" />
 
-<meta name="date" content="2020-02-29" />
+<meta name="date" content="2020-04-01" />
 
 <title>Downloading and using data from bdl</title>
 
@@ -301,7 +301,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Downloading and using data from bdl</h1>
 <h4 class="author">Krzysztof Kania</h4>
-<h4 class="date">2020-02-29</h4>
+<h4 class="date">2020-04-01</h4>
 
 
 
@@ -411,7 +411,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="map-generation" class="section level3">
 <h3>Map generation</h3>
-<p>The <code>bdl</code> package comes with the <code>bdl.maps</code> dataset containing spatial maps for each Poland’s level. <code>generate_map()</code> use them to generate maps filled with the bdl data. Use <code>unitLevel</code> to change the type of map. When the lower level is chosen, the map generation can be more time consuming as it has more spatial data to process. This function will download and load maps automatically. In case of any errors you can download them manually <a href="https://github.com/statisticspoland/R_Package_to_API_BDL/releases/tag/1.0.1">here</a>.</p>
+<p>The <code>bdl</code> package comes with the <code>bdl.maps</code> dataset containing spatial maps for each Poland’s level. <code>generate_map()</code> use them to generate maps filled with the bdl data. Use <code>unitLevel</code> to change the type of map. When the lower level is chosen, the map generation can be more time consuming as it has more spatial data to process. This function will download and load maps automatically. In case of any errors you can download them manually <a href="https://github.com/statisticspoland/R_Package_to_API_BDL/releases/tag/1.0.2">here</a>.</p>
 <p>Download data file and double-click to load it to environment.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="kw">generate_map</span>(<span class="dt">varId =</span> <span class="st">&quot;60559&quot;</span>, <span class="dt">year =</span> <span class="st">&quot;2017&quot;</span>, <span class="dt">unitLevel =</span> <span class="dv">3</span>)</a></code></pre></div>
 </div>

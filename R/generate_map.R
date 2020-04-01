@@ -11,7 +11,7 @@
 #'   
 #'   This function requires external map data "bdl.maps" loaded to global environment. 
 #'   You can get data here:
-#'   \href{https://github.com/statisticspoland/R_Package_to_API_BDL/releases/tag/1.0.1}{Map 
+#'   \href{https://github.com/statisticspoland/R_Package_to_API_BDL/releases/tag/1.0.2}{Map 
 #'   download}.
 #'   Download data and double-click to load it to environment.
 #' 
@@ -72,7 +72,7 @@ generate_map <- function(varId, year, unitLevel = 2, unitParentId = NULL, aggreg
       file_exist <- try(suppressWarnings(load(map_file)), silent = T)
 
       if(is.error(file_exist)){
-        download <- try(download.file(paste0("https://github.com/statisticspoland/R_Package_to_API_BDL/releases/download/1.0.1/", file_name), map_file, "auto"))
+        download <- try(download.file(paste0("https://github.com/statisticspoland/R_Package_to_API_BDL/releases/download/1.0.2/", file_name), map_file, "auto"))
         if(is.error(download)){
           stop()
         }else{
@@ -80,12 +80,17 @@ generate_map <- function(varId, year, unitLevel = 2, unitParentId = NULL, aggreg
           if(!exists(object_name)){
             stop( paste0("Loading map files has failed. Try to Restart your R session or remove any \n",
                          "bdl.maps.xxxx.RData files and download them manually from: \n",
-                         "https://github.com/statisticspoland/R_Package_to_API_BDL/releases/tag/1.0.1\n",
+                         "https://github.com/statisticspoland/R_Package_to_API_BDL/releases/tag/1.0.2\n",
                          "and put them into your Home direcotry: ", home))
           }
         }
       }
     }
+    
+    if(91 %in% df$attrId){
+      df[df$attrId == 91, ]$val <- NA
+    }
+    
     
     selected_map <- get(object_name)
     if(toString(unitLevel) == "1") selected_map <- selected_map$level1
@@ -97,30 +102,36 @@ generate_map <- function(varId, year, unitLevel = 2, unitParentId = NULL, aggreg
     
     
     shape <- dplyr::inner_join(selected_map, df, by = "id") 
+    
 
-    shape <- lwgeom::st_make_valid(shape)
 
     if(!inherits(shape, "sf")) class(shape) <- c("sf")
     
     label <- paste0(get_var_label(varId, lang = lang)," - ",year)
     
+
+    
     if(is.null(style)){
       map <- tmap::tm_shape(shape) +
-        tmap::tm_polygons(col = "val", id = "val",
-                          palette = palette, n = n,
-                          # contrast = c(-0.1, 1),
-                          title = get_measure_label(varId = varId), 
+        tmap::tm_polygons(col = "val", 
+                          id = "val",
+                          palette = palette, 
+                          n = n,
                           popup.vars = c(" " = "name", " " = "attributeDescription"),
-                          legend.reverse = T, legend.format = list(text.separator = "-")) +
+                          legend.reverse = T, legend.format = list(text.separator = "-", 
+                                                                   big.mark = " "), 
+                          textNA = ifelse(lang == "pl", "Brak danych", "Missing")) +
         tmap::tm_layout(title = label)
     } else {
       map <- tmap::tm_shape(shape) +
-        tmap::tm_polygons(col = "val", id = "val",
-                          palette = palette, n = n,
+        tmap::tm_polygons(col = "val", 
+                          id = "val",
+                          palette = palette, 
+                          n = n,
                           style = style,
-                          title = get_measure_label(varId = varId), 
                           popup.vars = c(" " = "name", " " = "attributeDescription"),
-                          legend.reverse = T, legend.format = list(text.separator = "-")) +
+                          legend.reverse = T, legend.format = list(text.separator = "-", big.mark = " "),
+                          textNA = ifelse(lang == "pl", "Brak danych", "Missing")) +
         tmap::tm_layout(title = label)
     }
       
@@ -141,12 +152,17 @@ generate_map <- function(varId, year, unitLevel = 2, unitParentId = NULL, aggreg
       
 
     if(!is.null(borderLevel) & !is.null(border_shape)){
-      border_shape <- lwgeom::st_make_valid(border_shape)
       map <- map + (tmap::tm_shape(border_shape) +
         tmap::tm_borders(lwd = 1.8))
     }
     
-    map <- tmap::tmap_leaflet(map)
+    dots <- list(...)
+    in_shiny <- F
+    if(!is.null(dots$in.shiny) && length(dots$in.shiny) == 1 && dots$in.shiny == T){
+      in_shiny <- T
+    }
+
+    map <- tmap::tmap_leaflet(map, in.shiny = in_shiny)
    
     map
     

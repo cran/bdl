@@ -10,7 +10,7 @@ get_var_label <- function(varId, lang = "pl") {
   
   temp <- list()
   for(val in 1:length(var_prefix$dimensions)){
-    temp[val] <- paste(var_prefix$dimensions[val], var_suffix[val], sep = ":")
+    temp[val] <- paste(var_prefix$dimensions[val], var_suffix[val], sep = ": ")
   }
   
   var_suffix <- paste(temp, collapse = ", ")
@@ -30,7 +30,7 @@ get_measure_label <- function(varId, lang = "pl") {
 }
 #' @keywords internal
 get_attr_label <- function(attrId, lang = "pl") {
-  attr_suffix <- attribute_info(attrId)
+  attr_suffix <- attribute_info(attrId, lang = lang)
   attr_label <- toString(attr_suffix$description)
   attr_label
 }
@@ -43,6 +43,13 @@ add_attribute_labels <- function(x, lang = "pl") {
   attribute_labels <- lapply(attributes, get_attr_label, lang = lang)
   names(attribute_labels) <- attributes
   df <- dplyr::mutate(x, attributeDescription = as.character(attribute_labels[as.character(x$attrId)]))
+  df
+}
+
+#' @keywords internal
+add_measure_columns <- function(varId, df, lang = "pl") {
+  measure_info <- variable_info(varId, lang = lang)
+  df <- df %>% dplyr::mutate(measureUnitId = as.character(measure_info$measureUnitId), measureName = as.character(measure_info$measureUnitName))
   df
 }
 
