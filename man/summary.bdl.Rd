@@ -16,8 +16,6 @@ Prints brief summary with basic statistical functions like mean, standard deviat
          min and max for bdl data frame.
 }
 \examples{
-\donttest{
-df <- get_data_by_variable(varId = "3643")
-summary(df)
-}
+# df <- get_data_by_variable(varId = "3643")
+# summary(df)
 }

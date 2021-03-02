@@ -42,10 +42,8 @@ To get all units skip the \code{parentId} parameter. \emph{Warning!} Downloading
   config = httr::use_proxy(url, port, username, password))}.
 }
 \examples{
- \donttest{
-    get_units(level = 2)
-    get_units("010000000000")
-}
+    # get_units(level = 2)
+    # get_units("010000000000")
 }
 \keyword{search}
 \keyword{units}

@@ -16,9 +16,7 @@
 #' @return A named list.
 #' @export
 #' @examples
-#'  \donttest{
-#'    ariable_info("420")
-#' }
+#'    # variable_info("420")
 #' @keywords info variables
 variable_info <- function(varId, lang = c("pl","en"), ...) {
 

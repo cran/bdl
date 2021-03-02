@@ -24,17 +24,15 @@
 #' @return A dataset as a tibble.
 #' @export
 #' @examples
-#'  \donttest{
-#'    get_panel_data(unitId = "030210101000", varId =  "60270")
+#'    # get_panel_data(unitId = "030210101000", varId =  "60270")
 #'    
-#'    get_panel_data(unitId = "030210101000", varId =  c("60270", "461668"))
+#'    # get_panel_data(unitId = "030210101000", varId =  c("60270", "461668"))
 #'    
-#'    get_panel_data(unitId = c("030210101000", "030210105000", "030210106000"), 
-#'                           varId =  c("60270", "461668"), year = c(2013:2016))
+#'    # get_panel_data(unitId = c("030210101000", "030210105000", "030210106000"), 
+#'    #                varId =  c("60270", "461668"), year = c(2013:2016))
 #'                           
-#'    get_panel_data(unitId = c("030210101000", "030210105000", "030210106000"), 
-#'                           varId =  c("60270", "461668"), ggplot = TRUE)
-#' }
+#'    # get_panel_data(unitId = c("030210101000", "030210105000", "030210106000"), 
+#'    #                varId =  c("60270", "461668"), ggplot = TRUE)
 #' @keywords utilities database
 get_panel_data <- function(unitId, varId, year = NULL, ggplot = FALSE, ...) {
   
@@ -66,7 +64,11 @@ get_panel_data <- function(unitId, varId, year = NULL, ggplot = FALSE, ...) {
     df <- purrr::reduce(df, rbind)
     
     if (ggplot == TRUE) {
-      df <- tidyr::pivot_longer(df, cols = colnames(df[,3:ncol(df)]), names_to = "variables", values_to = "values")
+      tdf <- dplyr::select(df,-dplyr::one_of(c("unit", "year", "attributeDescription")))
+      variable_col_names <- colnames(tdf)
+      
+      
+      df <- tidyr::pivot_longer(df, cols = variable_col_names, names_to = "variables", values_to = "values")
       df$year <- paste0(df$year, "-01-01")
       df$year <- as.Date(df$year)
     }
