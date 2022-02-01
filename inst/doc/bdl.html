@@ -12,7 +12,7 @@
 
 <meta name="author" content="Krzysztof Kania" />
 
-<meta name="date" content="2021-03-02" />
+<meta name="date" content="2022-02-01" />
 
 <title>Downloading and using data from bdl</title>
 
@@ -28,11 +28,19 @@
     </style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -133,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Downloading and using data from bdl</h1>
 <h4 class="author">Krzysztof Kania</h4>
-<h4 class="date">2021-03-02</h4>
+<h4 class="date">2022-02-01</h4>
 
 
 
@@ -243,7 +251,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="map-generation" class="section level3">
 <h3>Map generation</h3>
-<p>The <code>bdl</code> package comes with the <code>bdl.maps</code> dataset containing spatial maps for each Poland’s level. <code>generate_map()</code> use them to generate maps filled with the bdl data. Use <code>unitLevel</code> to change the type of map. When the lower level is chosen, the map generation can be more time consuming as it has more spatial data to process. This function will download and load maps automatically. In case of any errors you can download them manually <a href="https://github.com/statisticspoland/R_Package_to_API_BDL/releases/tag/1.0.3">here</a>.</p>
+<p>The <code>bdl</code> package comes with the <code>bdl.maps</code> dataset containing spatial maps for each Poland’s level. <code>generate_map()</code> use them to generate maps filled with the bdl data. Use <code>unitLevel</code> to change the type of map. When the lower level is chosen, the map generation can be more time consuming as it has more spatial data to process. This function will download and load maps automatically. In case of any errors you can download them manually <a href="https://github.com/statisticspoland/R_Package_to_API_BDL/releases/tag/1.0.4">here</a>.</p>
 <p>Download data file and double-click to load it to environment.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">generate_map</span>(<span class="at">varId =</span> <span class="st">&quot;60559&quot;</span>, <span class="at">year =</span> <span class="st">&quot;2017&quot;</span>, <span class="at">unitLevel =</span> <span class="dv">3</span>)</span></code></pre></div>
 </div>

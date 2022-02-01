@@ -14,20 +14,6 @@ test_that("Proper url build", {
     "https://bdl.stat.gov.pl/api/v1/Subjects?page-Size=100&format=json")
 })
 
-context("Get request")
-dir <- "data/By-Variable"
-vid <- "3643"
-
-filters <- list(year = c("2000", "2010"))
-request_by_variable <- get_request(dir = dir, id = vid, filters = filters)
-
-test_that("Code errors", {
-  expect_error(get_request("foo","bar"),
-    "Failure to get data. Probably invalid directory. Status code: 404.")
-  expect_error(get_request("data/By-Unit","foo"),
-    "Failure to get data. Probably invalid id. Status code: 400.")
-})
-
 
 context("Get data by unit")
 
