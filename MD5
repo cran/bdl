@@ -1,9 +1,9 @@
-56bdb9d6c23fb904744057c0748fbed1 *DESCRIPTION
+f301c3e0a4051ecd7505d8374801aadd *DESCRIPTION
 1903a3782c934094a298d7fdca6382ae *NAMESPACE
-9015d62200671b6c6e99f2ea6936ff79 *NEWS.md
+e2cc2019d612c3783e6109e92f367370 *NEWS.md
 ef543cd3b96b0dde46bc423207587afc *R/attribute_info.R
 eeb23dbb9e4618b3015c9fb9f7bec78b *R/bdl.R
-599ee0d017a534eb9f9a64963c383da2 *R/generate_map.R
+a4eeed632b5cd815d1cf91ae3b8c6027 *R/generate_map.R
 9dc409142b8f5369905dbf5010ebb9df *R/get_aggregates.R
 7bc558126944fa13ee90d2b2e5111f20 *R/get_attributes.R
 78790923bc9360fab7a79aea209d36c3 *R/get_data_by_unit.R
@@ -32,13 +32,13 @@ bf72f46e867e4a3748789d2fc5ac808f *R/subject_info.R
 530cbaf44515cae578f43296da45a797 *R/unit_locality_info.R
 50415f10a343c3d9b1e68b78526ae295 *R/variable_info.R
 38aa3a7b90c90a06e4c0c707dc72cb83 *R/zzz.R
-e2668ad76e25f3667e78b08fc6a92f8c *build/vignette.rds
+bd508f641b2893de5fd8623688f091b6 *build/vignette.rds
 291dc161d898d4e0194a0252ef7357fe *inst/doc/bdl.R
-bc480039a7683fe9714f4d827ab49356 *inst/doc/bdl.Rmd
-009e9e9d9e530a46abd4841801e83f92 *inst/doc/bdl.html
+5767ffe273aa38fb2574bd0bd087c21b *inst/doc/bdl.Rmd
+523d681dcbfaac3433a4365889f88130 *inst/doc/bdl.html
 76f5d96cfef77b44b2cd0e7e07ac4db5 *man/attribute_info.Rd
-6061ff966d8908319549b19fab1d333f *man/bdl.Rd
-03be9857f59ad9c19050e1f9cae899c7 *man/generate_map.Rd
+733e3a4da67c6e7b2d4e603fa8bf6060 *man/bdl.Rd
+fa7d95b9e746e67d3377c4b2ec92160b *man/generate_map.Rd
 d2cdff1dd223fb11f956bbba51366933 *man/get_aggregates.Rd
 fb01fd1571c59a2778ed8c580dd8b466 *man/get_attributes.Rd
 e086c5ea87fa9fbd4fa6a1e87d66dd08 *man/get_data_by_unit.Rd
@@ -66,4 +66,4 @@ f600033be955ee733fd950a040f78015 *man/search_subjects.Rd
 fc9ecd7937f0c7923be9ae762695b3e9 *man/variable_info.Rd
 75509eb9f5a7b3d3e1ac6c9d0523f60d *tests/testthat.R
 fc78f02fb59a41bf52f2c84942b83922 *tests/testthat/test-requests.R
-bc480039a7683fe9714f4d827ab49356 *vignettes/bdl.Rmd
+5767ffe273aa38fb2574bd0bd087c21b *vignettes/bdl.Rmd

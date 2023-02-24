@@ -12,29 +12,42 @@
 
 <meta name="author" content="Krzysztof Kania" />
 
-<meta name="date" content="2022-02-01" />
+<meta name="date" content="2023-02-24" />
 
 <title>Downloading and using data from bdl</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
 
 
 <style type="text/css">
-  code {
-    white-space: pre;
-  }
-  .sourceCode {
-    overflow: visible;
-  }
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
@@ -52,55 +65,54 @@ pre > code.sourceCode { white-space: pre-wrap; }
 pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-  { counter-reset: source-line 0; }
+{ counter-reset: source-line 0; }
 pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
+{ position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
 div.sourceCode
-  {   }
+{ }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -109,13 +121,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -127,7 +146,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -141,17 +340,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Downloading and using data from bdl</h1>
 <h4 class="author">Krzysztof Kania</h4>
-<h4 class="date">2022-02-01</h4>
+<h4 class="date">2023-02-24</h4>
 
 
 
-<p>The <code>bdl</code> package is an interface to Local Data Bank(Bank Danych Lokalnych - bdl) <a href="https://api.stat.gov.pl/Home/BdlApi?lang=en">API</a> with a set of useful tools like quick plotting using data from the data bank.</p>
+<p>The <code>bdl</code> package is an interface to Local Data Bank(Bank
+Danych Lokalnych - bdl) <a href="https://api.stat.gov.pl/Home/BdlApi?lang=en">API</a> with a set of
+useful tools like quick plotting using data from the data bank.</p>
 <div id="intro" class="section level2">
 <h2>Intro</h2>
-<p>Working with <code>bdl</code> is based on id codes. Most of the data downloading functions require specifying one or vector of multiple unit or variable ids as a string.</p>
-<p>It is recommended to use a private API key which u can get <a href="https://api.stat.gov.pl/Home/BdlApi?lang=en">here</a>. To apply it use: <code>options(bdl.api_private_key =&quot;your_key&quot;)</code></p>
-<p>Also, every function returns data in Polish by default. If you would like to get data in English, just add <code>lang = &quot;en&quot;</code> to any function.</p>
-<p>Any metadata information (unit levels, aggregates, NUTS code explanation, etc.) can be found <a href="https://bdl.stat.gov.pl/BDL/metadane">here</a>.</p>
+<p>Working with <code>bdl</code> is based on id codes. Most of the data
+downloading functions require specifying one or vector of multiple unit
+or variable ids as a string.</p>
+<p>It is recommended to use a private API key which u can get <a href="https://api.stat.gov.pl/Home/BdlApi?lang=en">here</a>. To apply it
+use: <code>options(bdl.api_private_key =&quot;your_key&quot;)</code></p>
+<p>Also, every function returns data in Polish by default. If you would
+like to get data in English, just add <code>lang = &quot;en&quot;</code> to any
+function.</p>
+<p>Any metadata information (unit levels, aggregates, NUTS code
+explanation, etc.) can be found <a href="https://bdl.stat.gov.pl/BDL/metadane">here</a>.</p>
 </div>
 <div id="searching-unit-id" class="section level2">
 <h2>Searching unit id</h2>
@@ -162,22 +369,32 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>Units consist of 6 levels:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_levels</span>()</span></code></pre></div>
-<p>The lowest - seventh level has its own separate functions with suffix <code>localities</code>. Warning - the <code>localities</code> functions have a different set of arguments. Check package or API documentation for more info.</p>
+<p>The lowest - seventh level has its own separate functions with suffix
+<code>localities</code>. Warning - the <code>localities</code> functions
+have a different set of arguments. Check package or API documentation
+for more info.</p>
 <div id="direct-search" class="section level3">
 <h3>Direct search</h3>
-<p>Direct searching <code>search_units()</code> takes couple different arguments like:</p>
+<p>Direct searching <code>search_units()</code> takes couple different
+arguments like:</p>
 <ul>
-<li><code>name</code> - required search phrase (can be empty string)</li>
+<li><code>name</code> - required search phrase (can be empty
+string)</li>
 <li><code>level</code> - narrows returned units to given level</li>
 </ul>
-<p>and more. To look for more arguments on any given function check package or API documentation.</p>
+<p>and more. To look for more arguments on any given function check
+package or API documentation.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">search_units</span>(<span class="at">name =</span> <span class="st">&quot;wro&quot;</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">search_units</span>(<span class="at">name =</span> <span class="st">&quot;&quot;</span>, <span class="at">level =</span> <span class="dv">3</span>)</span></code></pre></div>
 </div>
 <div id="tree-listing" class="section level3">
 <h3>Tree listing</h3>
-<p>To get all units available in local data bank run <code>get_units()</code> without any argument(warning - it can eat data limit very fast around 4.5k rows):</p>
-<p>To narrow the list add <code>unitParentId</code>. The function will return all children units for a given parent at all levels. Add <code>level</code> argument to filter units even further.</p>
+<p>To get all units available in local data bank run
+<code>get_units()</code> without any argument(warning - it can eat data
+limit very fast around 4.5k rows):</p>
+<p>To narrow the list add <code>unitParentId</code>. The function will
+return all children units for a given parent at all levels. Add
+<code>level</code> argument to filter units even further.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_units</span>(<span class="at">parentId =</span> <span class="st">&quot;000000000000&quot;</span>, <span class="at">level =</span> <span class="dv">5</span>)</span></code></pre></div>
 </div>
 </div>
@@ -186,17 +403,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Subjects are themed directories of variables.</p>
 <p>We have two searching methods for both subjects and variables:</p>
 <ul>
-<li>Direct search <code>search_variables()</code> and <code>search_subjects()</code></li>
-<li>Subject tree listing by <code>get_subjects()</code> and <code>get_variables()</code></li>
+<li>Direct search <code>search_variables()</code> and
+<code>search_subjects()</code></li>
+<li>Subject tree listing by <code>get_subjects()</code> and
+<code>get_variables()</code></li>
 </ul>
 <div id="subjects" class="section level3">
 <h3>Subjects</h3>
 <p>To directly search for subject we just provide search phrase:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">search_subjects</span>(<span class="st">&quot;lud&quot;</span>)</span></code></pre></div>
-<p>Subjects consist of 3 levels (categories, groups, subgroups) - <code>K</code>, <code>G</code> and <code>P</code> respectively. The fourth level of the subject (child of a subgroup) would be variables.</p>
+<p>Subjects consist of 3 levels (categories, groups, subgroups) -
+<code>K</code>, <code>G</code> and <code>P</code> respectively. The
+fourth level of the subject (child of a subgroup) would be
+variables.</p>
 <p>To list all top level subjects use <code>get_subjects()</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_subjects</span>()</span></code></pre></div>
-<p>To list sub-subjects to given category or group use <code>get_subjects()</code> with <code>parentId</code> argument:</p>
+<p>To list sub-subjects to given category or group use
+<code>get_subjects()</code> with <code>parentId</code> argument:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_subjects</span>(<span class="at">parentId =</span> <span class="st">&quot;K3&quot;</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_subjects</span>(<span class="at">parentId =</span> <span class="st">&quot;G7&quot;</span>)</span></code></pre></div>
 </div>
@@ -204,7 +427,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3>Variables</h3>
 <p>Firstly you can list variables for given subject (subgroup):</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_variables</span>(<span class="st">&quot;P2425&quot;</span>)</span></code></pre></div>
-<p>Secondly, you can direct search variables with <code>search_variables()</code>. You can use an empty string as <code>name</code> to list all variables but I strongly advise against as it has around 40 000 rows and you will probably hit data limit.</p>
+<p>Secondly, you can direct search variables with
+<code>search_variables()</code>. You can use an empty string as
+<code>name</code> to list all variables but I strongly advise against as
+it has around 40 000 rows and you will probably hit data limit.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">search_variables</span>(<span class="st">&quot;samochod&quot;</span>)</span></code></pre></div>
 <p>You can narrow the search to the given subject - subgroup:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">search_variables</span>(<span class="st">&quot;lud&quot;</span>, <span class="at">subjectId =</span> <span class="st">&quot;P2425&quot;</span>)</span></code></pre></div>
@@ -212,38 +438,59 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="downloading-data" class="section level2">
 <h2>Downloading data</h2>
-<p>If you picked unit and variable codes, you are ready to download data. You can do this two ways:</p>
+<p>If you picked unit and variable codes, you are ready to download
+data. You can do this two ways:</p>
 <ul>
-<li>Download data of multiple variables for a single unit <code>get_data_by_unit()</code></li>
-<li>Download data of single variable for multiple units <code>get_data_by_variable()</code></li>
+<li>Download data of multiple variables for a single unit
+<code>get_data_by_unit()</code></li>
+<li>Download data of single variable for multiple units
+<code>get_data_by_variable()</code></li>
 </ul>
 <div id="single-unit-multiple-variables" class="section level3">
 <h3>Single unit, multiple variables</h3>
-<p>We will use <code>get_data_by_unit()</code>. We specify our single unit as <code>unitId</code> string argument and variables by a vector of strings. Optionally we can specify years of data. If not all available years are used.</p>
+<p>We will use <code>get_data_by_unit()</code>. We specify our single
+unit as <code>unitId</code> string argument and variables by a vector of
+strings. Optionally we can specify years of data. If not all available
+years are used.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_data_by_unit</span>(<span class="at">unitId =</span> <span class="st">&quot;023200000000&quot;</span>, <span class="at">varId =</span>  <span class="st">&quot;3643&quot;</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_data_by_unit</span>(<span class="at">unitId =</span> <span class="st">&quot;023200000000&quot;</span>, <span class="at">varId =</span>  <span class="fu">c</span>(<span class="st">&quot;3643&quot;</span>, <span class="st">&quot;2137&quot;</span>, <span class="st">&quot;148190&quot;</span>))</span></code></pre></div>
-<p>To get more information about data we can add <code>type</code> argument and set it to <code>&quot;label&quot;</code> to add an additional column with the variable info.</p>
+<p>To get more information about data we can add <code>type</code>
+argument and set it to <code>&quot;label&quot;</code> to add an additional column
+with the variable info.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_data_by_unit</span>(<span class="at">unitId =</span> <span class="st">&quot;023200000000&quot;</span>, <span class="at">varId =</span> <span class="st">&quot;3643&quot;</span>, <span class="at">type =</span> <span class="st">&quot;label&quot;</span>)</span></code></pre></div>
 </div>
 <div id="multiple-units-single-variable" class="section level3">
 <h3>Multiple units, single variable</h3>
-<p>We will use <code>get_data_by_variable()</code>. We specify our single variable as <code>varId</code> string argument. If no <code>unitParentId</code> is provided, the function will return all available units for a given variable. Setting <code>unitParentId</code> will return all available children units (on all levels). To narrow unit level set <code>unitLevel</code>. Optionally we can specify years of data. If not all available years are used.</p>
+<p>We will use <code>get_data_by_variable()</code>. We specify our
+single variable as <code>varId</code> string argument. If no
+<code>unitParentId</code> is provided, the function will return all
+available units for a given variable. Setting <code>unitParentId</code>
+will return all available children units (on all levels). To narrow unit
+level set <code>unitLevel</code>. Optionally we can specify years of
+data. If not all available years are used.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_data_by_variable</span>(<span class="st">&quot;420&quot;</span>, <span class="at">unitParentId =</span> <span class="st">&quot;011210000000&quot;</span>, <span class="at">year =</span> <span class="dv">2013</span><span class="sc">:</span><span class="dv">2016</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_data_by_variable</span>(<span class="st">&quot;420&quot;</span>, <span class="at">unitLevel =</span> <span class="st">&quot;2&quot;</span>, <span class="at">year =</span> <span class="dv">2013</span><span class="sc">:</span><span class="dv">2016</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="useful-tools" class="section level2">
 <h2>Useful tools</h2>
-<p>The <code>bdl</code> package provides a couple of additional functions for summarizing and visualizing data.</p>
+<p>The <code>bdl</code> package provides a couple of additional
+functions for summarizing and visualizing data.</p>
 <div id="summary" class="section level3">
 <h3>Summary</h3>
-<p>Data downloaded via <code>get_data_by_unit()</code> or <code>get_data_by_variable()</code> and their locality versions can be easily summarized by <code>summary()</code>:</p>
+<p>Data downloaded via <code>get_data_by_unit()</code> or
+<code>get_data_by_variable()</code> and their locality versions can be
+easily summarized by <code>summary()</code>:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">get_data_by_variable</span>(<span class="at">varId =</span> <span class="st">&quot;3643&quot;</span>, <span class="at">unitParentId =</span> <span class="st">&quot;010000000000&quot;</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df)</span></code></pre></div>
 </div>
 <div id="plotting" class="section level3">
 <h3>Plotting</h3>
-<p>Plotting functions in this package are interfaces to the data downloading functions. Some of them require specifying <code>data_type</code> - a method for downloading data, and the rest of the arguments will be relevant to specify <code>data_type</code> function. Check documentation for more details.</p>
+<p>Plotting functions in this package are interfaces to the data
+downloading functions. Some of them require specifying
+<code>data_type</code> - a method for downloading data, and the rest of
+the arguments will be relevant to specify <code>data_type</code>
+function. Check documentation for more details.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">line_plot</span>(<span class="at">data_type =</span> <span class="st">&quot;unit&quot;</span>, <span class="at">unitId =</span> <span class="st">&quot;000000000000&quot;</span>, <span class="at">varId =</span> <span class="fu">c</span>(<span class="st">&quot;415&quot;</span>,<span class="st">&quot;420&quot;</span>))</span></code></pre></div>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pie_plot</span>(<span class="at">data_type =</span><span class="st">&quot;variable&quot;</span> ,<span class="st">&quot;1&quot;</span>, <span class="st">&quot;2018&quot;</span>,<span class="at">unitParentId=</span><span class="st">&quot;042214300000&quot;</span>, <span class="at">unitLevel =</span> <span class="st">&quot;6&quot;</span>)</span></code></pre></div>
 <p>Scatter plot is unique - requires vector of only 2 variables.</p>
@@ -251,20 +498,33 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="map-generation" class="section level3">
 <h3>Map generation</h3>
-<p>The <code>bdl</code> package comes with the <code>bdl.maps</code> dataset containing spatial maps for each Poland’s level. <code>generate_map()</code> use them to generate maps filled with the bdl data. Use <code>unitLevel</code> to change the type of map. When the lower level is chosen, the map generation can be more time consuming as it has more spatial data to process. This function will download and load maps automatically. In case of any errors you can download them manually <a href="https://github.com/statisticspoland/R_Package_to_API_BDL/releases/tag/1.0.4">here</a>.</p>
+<p>The <code>bdl</code> package comes with the <code>bdl.maps</code>
+dataset containing spatial maps for each Poland’s level.
+<code>generate_map()</code> use them to generate maps filled with the
+bdl data. Use <code>unitLevel</code> to change the type of map. When the
+lower level is chosen, the map generation can be more time consuming as
+it has more spatial data to process. This function will download and
+load maps automatically. In case of any errors you can download them
+manually <a href="https://github.com/statisticspoland/R_Package_to_API_BDL/releases/tag/1.0.5">here</a>.</p>
 <p>Download data file and double-click to load it to environment.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">generate_map</span>(<span class="at">varId =</span> <span class="st">&quot;60559&quot;</span>, <span class="at">year =</span> <span class="st">&quot;2017&quot;</span>, <span class="at">unitLevel =</span> <span class="dv">3</span>)</span></code></pre></div>
 </div>
 <div id="multi-download" class="section level3">
 <h3>Multi download</h3>
-<p>Downloading functions <code>get_data_by_unit()</code> and <code>get_data_by_variable()</code> have alternative “multi” downloading mode. Function that would work for example single unit, if provided a vector will make additional column with values for each unit provided:</p>
+<p>Downloading functions <code>get_data_by_unit()</code> and
+<code>get_data_by_variable()</code> have alternative “multi” downloading
+mode. Function that would work for example single unit, if provided a
+vector will make additional column with values for each unit
+provided:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_data_by_unit</span>(<span class="at">unitId =</span> <span class="fu">c</span>(<span class="st">&quot;023200000000&quot;</span>, <span class="st">&quot;020800000000&quot;</span>), <span class="at">varId =</span>  <span class="fu">c</span>(<span class="st">&quot;3643&quot;</span>, <span class="st">&quot;2137&quot;</span>, <span class="st">&quot;148190&quot;</span>))</span></code></pre></div>
 <p>Or multiple variables for <code>get_data_by_variable()</code>:</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_data_by_variable</span>(<span class="at">varId =</span><span class="fu">c</span>(<span class="st">&quot;3643&quot;</span>,<span class="st">&quot;420&quot;</span>), <span class="at">unitParentId =</span> <span class="st">&quot;010000000000&quot;</span>)</span></code></pre></div>
 <p>This mode works for the locality version as well.</p>
-<p>More consistent method of downloading multiple variables for multiple units is provided by <code>get_panel_data()</code> function:</p>
+<p>More consistent method of downloading multiple variables for multiple
+units is provided by <code>get_panel_data()</code> function:</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_panel_data</span>(<span class="at">unitId =</span> <span class="fu">c</span>(<span class="st">&quot;030210101000&quot;</span>, <span class="st">&quot;030210105000&quot;</span>, <span class="st">&quot;030210106000&quot;</span>), <span class="at">varId =</span>  <span class="fu">c</span>(<span class="st">&quot;60270&quot;</span>, <span class="st">&quot;461668&quot;</span>), <span class="at">year =</span> <span class="fu">c</span>(<span class="dv">2015</span><span class="sc">:</span><span class="dv">2016</span>))</span></code></pre></div>
-<p>It offers also parameter <code>ggplot = TRUE</code> which produces output in the long form suitable for plotting with ggplot package:</p>
+<p>It offers also parameter <code>ggplot = TRUE</code> which produces
+output in the long form suitable for plotting with ggplot package:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">get_panel_data</span>(<span class="at">unitId =</span> <span class="fu">c</span>(<span class="st">&quot;030210101000&quot;</span>, <span class="st">&quot;030210105000&quot;</span>, <span class="st">&quot;030210106000&quot;</span>), <span class="at">varId =</span>  <span class="fu">c</span>(<span class="st">&quot;60270&quot;</span>, <span class="st">&quot;461668&quot;</span>), <span class="at">year =</span> <span class="fu">c</span>(<span class="dv">2015</span><span class="sc">:</span><span class="dv">2018</span>), <span class="at">ggplot =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df,<span class="fu">aes</span>(<span class="at">x=</span>year, <span class="at">y=</span> values, <span class="at">color =</span> unit)) <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">linetype =</span> variables)) <span class="sc">+</span> <span class="fu">scale_color_discrete</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>)) <span class="sc">+</span> <span class="fu">scale_linetype_discrete</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;X&quot;</span>, <span class="st">&quot;Y&quot;</span>))</span></code></pre></div>
